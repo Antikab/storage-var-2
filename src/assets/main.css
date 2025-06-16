@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Шрифты */
+  --font-family: 'Inter', sans-serif;
+
+  /* Цвета */
+  --color-primary-light-color: #f4ebff;
+  --color-primary-color-hover: #9f56d9;
+  --color-primary-color: #7f56d9;
+
+  --color-black-color: #101828;
+
+  --color-light-gray-color: #eaecf0;
+  --color-light-gray-color-2: #f9fafb;
+  --color-gray-color: #667085;
+  --color-gray-color-2: #98a2b3;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-family);
+    color: var(--color-gray-color);
+  }
+}
