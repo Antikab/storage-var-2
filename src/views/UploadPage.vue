@@ -14,16 +14,27 @@ function onClick() {
   fileInput.value?.click()
 }
 
-function onClearAll() {
+function onClearFiles() {
   filesList.value = []
 }
 
-function onDragOver() {
-  dragZone.value = true
+function onRemoveFile(file) {
+filesList.value = filesList.value.filter(f => f.id !== file.id)
+}
+
+function generateFileId(file) {
+  return `${file.size}-${file.lastModified}-${file.name}`
+}
+
+function fileExists(id) {
+  return filesList.value.some((file) => file.id === id)
 }
 
 function onDragLeave() {
   dragZone.value = false
+}
+function onDragOver() {
+  dragZone.value = true
 }
 
 function onDrop(event) {
@@ -31,12 +42,14 @@ function onDrop(event) {
 
   const currentFiles = event.dataTransfer.files
   for (const file of currentFiles) {
-    const fileData = {
+    const id = generateFileId(file)
+    if (fileExists(id)) continue
+    filesList.value.push({
+      id: `${file.size}-${file.lastModified}-${file.name}`,
       name: file.name,
       size: file.size,
       type: file.type,
-    }
-    filesList.value.push(fileData)
+    })
     console.log(filesList.value)
   }
 }
@@ -44,12 +57,14 @@ function onDrop(event) {
 function uploadFiles() {
   const currentFiles = fileInput.value.files
   for (const file of currentFiles) {
-    const fileData = {
+    const id = generateFileId(file)
+    if (fileExists(id)) continue
+    filesList.value.push({
+      id: `${file.size}-${file.lastModified}-${file.name}`,
       name: file.name,
       size: file.size,
       type: file.type,
-    }
-    filesList.value.push(fileData)
+    })
     console.log(filesList.value)
   }
 }
@@ -84,7 +99,6 @@ onBeforeUnmount(() => {
         @drop="onDrop"
         @dragover="onDragOver"
         @dragleave="onDragLeave"
-        :class="{ 'bg-amber-300': dragZone }"
         class="flex flex-col justify-center items-center pb-6 transition-colors duration-500"
       >
         <div class="relative h-[120px] w-[152px] m-auto">
@@ -123,6 +137,12 @@ onBeforeUnmount(() => {
           :key="file.name + file.size"
           class="flex flex-col gap-1 odd:bg-light-gray-color even:bg-light-gray-color-2 px-4 py-2 mx-4 text-xs break-all rounded-md"
         >
+          <button
+            class="flex justify-end text-primary-color-hover hover:text-red-600 transition-colors duration-250"
+            @click="onRemoveFile(file)"
+          >
+            Delete
+          </button>
           <div>{{ file.name }}</div>
           <div>Size: {{ bytesToSize(file.size) }}</div>
         </div>
@@ -138,7 +158,7 @@ onBeforeUnmount(() => {
         <button
           v-if="filesList.length"
           class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer"
-          @click="onClearAll"
+          @click="onClearFiles"
         >
           <div class="text-sm">Clear list</div>
         </button>
