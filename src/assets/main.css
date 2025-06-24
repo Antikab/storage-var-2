@@ -22,4 +22,12 @@
     font-family: var(--font-family);
     color: var(--color-gray-color);
   }
+
+  button {
+    transition:
+      color 250ms,
+      background-color 250ms;
+
+    cursor: pointer;
+  }
 }

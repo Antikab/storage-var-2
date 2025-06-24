@@ -19,7 +19,7 @@ function onClearFiles() {
 }
 
 function onRemoveFile(file) {
-filesList.value = filesList.value.filter(f => f.id !== file.id)
+  filesList.value = filesList.value.filter((f) => f.id !== file.id)
 }
 
 function generateFileId(file) {
@@ -45,12 +45,11 @@ function onDrop(event) {
     const id = generateFileId(file)
     if (fileExists(id)) continue
     filesList.value.push({
-      id: `${file.size}-${file.lastModified}-${file.name}`,
+      id,
       name: file.name,
       size: file.size,
       type: file.type,
     })
-    console.log(filesList.value)
   }
 }
 
@@ -58,14 +57,16 @@ function uploadFiles() {
   const currentFiles = fileInput.value.files
   for (const file of currentFiles) {
     const id = generateFileId(file)
-    if (fileExists(id)) continue
+    if (fileExists(id)) {
+      alert(`File ${file.name} has already been added to the list`)
+      continue
+    }
     filesList.value.push({
       id: `${file.size}-${file.lastModified}-${file.name}`,
       name: file.name,
       size: file.size,
       type: file.type,
     })
-    console.log(filesList.value)
   }
 }
 
@@ -132,20 +133,22 @@ onBeforeUnmount(() => {
         </p>
       </div>
       <div v-else class="max-h-[175px] h-fit flex flex-col gap-2.5 overflow-y-auto">
-        <div
-          v-for="file in filesList"
-          :key="file.name + file.size"
-          class="flex flex-col gap-1 odd:bg-light-gray-color even:bg-light-gray-color-2 px-4 py-2 mx-4 text-xs break-all rounded-md"
-        >
-          <button
-            class="flex justify-end text-primary-color-hover hover:text-red-600 transition-colors duration-250"
-            @click="onRemoveFile(file)"
+        <TransitionGroup name="list">
+          <div
+            v-for="file in filesList"
+            :key="file.id"
+            class="flex flex-col gap-1 px-4 py-2 mx-4 odd:bg-light-gray-color even:bg-light-gray-color-2 hover:bg-primary-light-color text-xs break-all rounded-md transition-colors duration-300"
           >
-            Delete
-          </button>
-          <div>{{ file.name }}</div>
-          <div>Size: {{ bytesToSize(file.size) }}</div>
-        </div>
+            <button
+              class="ml-auto text-primary-color-hover hover:text-red-600"
+              @click="onRemoveFile(file)"
+            >
+              <span class="px-1 py-2"> Delete </span>
+            </button>
+            <div>{{ file.name }}</div>
+            <div>Size: {{ bytesToSize(file.size) }}</div>
+          </div>
+        </TransitionGroup>
       </div>
       <div class="flex flex-nowrap gap-2 mt-3 mb-2">
         <button
@@ -164,7 +167,7 @@ onBeforeUnmount(() => {
         </button>
       </div>
       <button
-        class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer"
+        class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer select-none"
         @click="onClick"
       >
         <inline-svg class="size-5" :src="IconUpload" aria-label="Upload btn"></inline-svg>
@@ -181,3 +184,28 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(20px) scale(0.98);
+}
+
+.list-enter-to,
+.list-leave-from {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.list-leave-active {
+  position: relative;
+  z-index: 1;
+}
+</style>
