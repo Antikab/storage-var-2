@@ -1,6 +1,30 @@
+<script setup lang="ts">
+import BtnUpload from '@/components/BtnUpload.vue'
+import FileRow from '@/components/FileRow.vue'
+import { useFilesStore } from '@/stores/files'
+import { useFileUpload } from '@/composables/useFileUpload'
+
+const { fileInput, openFileDialog, handleFiles, uploadAllFiles } = useFileUpload()
+const filesStore = useFilesStore()
+</script>
 
 <template>
-  <div class="flex justify-center items-center">
-files
+  <div class="w-full flex flex-col items-center">
+    <div class="w-full flex justify-between items-center px-6 py-5">
+      <div class="text-lg font-medium text-black-color">Files uploaded</div>
+      <BtnUpload @click="filesStore.localFiles.length ? uploadAllFiles() : openFileDialog()" />
+      <input
+        ref="fileInput"
+        type="file"
+        multiple
+        class="hidden"
+        @change="(event) => handleFiles(event.target.files)"
+      />
+    </div>
+
+    <div v-if="filesStore.loading" class="text-gray-400 text-center py-8">
+      Loading files, please wait...
+    </div>
+    <FileRow v-else />
   </div>
 </template>

@@ -1,77 +1,26 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-import { bytesToSize } from '@/utils/utils'
-import IconUpload from '@/assets/icons/icon-upload.svg'
+import { useFilesStore } from '@/stores/files'
+import { useFileUpload } from '@/composables/useFileUpload'
+import { formatSize, generateFileId } from '@/utils/utils'
 import IconUploadDndActive from '@/assets/icons/icon-upload-dnd-active.svg'
 import IconUploadDnd from '@/assets/icons/icon-upload-dnd.svg'
+import BtnUpload from '@/components/BtnUpload.vue'
 
-const fileInput = ref(null)
-const filesList = ref([])
-const dragZone = ref(false)
-
-function onClick() {
-  fileInput.value?.click()
-}
-
-function onClearFiles() {
-  filesList.value = []
-}
-
-function onRemoveFile(file) {
-  filesList.value = filesList.value.filter((f) => f.id !== file.id)
-}
-
-function generateFileId(file) {
-  return `${file.size}-${file.lastModified}-${file.name}`
-}
-
-function fileExists(id) {
-  return filesList.value.some((file) => file.id === id)
-}
-
-function onDragLeave() {
-  dragZone.value = false
-}
-function onDragOver() {
-  dragZone.value = true
-}
-
-function onDrop(event) {
-  dragZone.value = false
-
-  const currentFiles = event.dataTransfer.files
-  for (const file of currentFiles) {
-    const id = generateFileId(file)
-    if (fileExists(id)) continue
-    filesList.value.push({
-      id,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    })
-  }
-}
-
-function uploadFiles() {
-  const currentFiles = fileInput.value.files
-  for (const file of currentFiles) {
-    const id = generateFileId(file)
-    if (fileExists(id)) {
-      alert(`File ${file.name} has already been added to the list`)
-      continue
-    }
-    filesList.value.push({
-      id: `${file.size}-${file.lastModified}-${file.name}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    })
-  }
-}
+const filesStore = useFilesStore()
+const {
+  fileInput,
+  dragZone,
+  openFileDialog,
+  handleFiles,
+  uploadAllFiles,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+} = useFileUpload()
 
 const events = ['dragenter', 'dragover', 'dragleave', 'drop']
-
 function preventDefaults(event) {
   event.preventDefault()
 }
@@ -90,13 +39,20 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="w-full flex flex-col items-center h-screen">
+    <input
+      ref="fileInput"
+      type="file"
+      multiple
+      class="hidden"
+      @change="(event) => handleFiles(event.target.files)"
+    />
     <div class="w-full text-lg font-medium text-black-color px-6 py-5">My projects</div>
 
     <div class="w-full border-b border-b-light-gray-color"></div>
 
     <div class="w-[352px] flex flex-col justify-center grow lg:mb-10">
       <div
-        v-if="!filesList.length"
+        v-if="!filesStore.localFiles.length"
         @drop="onDrop"
         @dragover="onDragOver"
         @dragleave="onDragLeave"
@@ -132,55 +88,41 @@ onBeforeUnmount(() => {
           Start creating by uploading your files.
         </p>
       </div>
+
       <div v-else class="max-h-[175px] h-fit flex flex-col gap-2.5 overflow-y-auto">
         <TransitionGroup name="list">
           <div
-            v-for="file in filesList"
+            v-for="file in filesStore.localFiles"
             :key="file.id"
             class="flex flex-col gap-1 px-4 py-2 mx-4 odd:bg-light-gray-color even:bg-light-gray-color-2 hover:bg-primary-light-color text-xs break-all rounded-md transition-colors duration-300"
           >
             <button
               class="ml-auto text-primary-color-hover hover:text-red-600"
-              @click="onRemoveFile(file)"
+              @click="filesStore.removeLocalFile(file.id)"
             >
               <span class="px-1 py-2"> Delete </span>
             </button>
             <div>{{ file.name }}</div>
-            <div>Size: {{ bytesToSize(file.size) }}</div>
+            <div>Size: {{ formatSize(file.size) }}</div>
           </div>
         </TransitionGroup>
       </div>
-      <div class="flex flex-nowrap gap-2 mt-3 mb-2">
+
+      <div v-if="filesStore.localFiles.length" class="flex flex-nowrap gap-2 mt-3 mb-2">
         <button
-          v-if="filesList.length"
           class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer"
-          @click="onClick"
+          @click="openFileDialog"
         >
           <div class="text-sm">Add files</div>
         </button>
         <button
-          v-if="filesList.length"
           class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer"
-          @click="onClearFiles"
+          @click="filesStore.clearLocalFiles"
         >
           <div class="text-sm">Clear list</div>
         </button>
       </div>
-      <button
-        class="flex flex-nowrap w-full justify-center items-center gap-2 px-4 py-2 bg-primary-color hover:bg-primary-color-hover text-white rounded-sm cursor-pointer select-none"
-        @click="onClick"
-      >
-        <inline-svg class="size-5" :src="IconUpload" aria-label="Upload btn"></inline-svg>
-        <span class="text-sm"> Upload </span>
-      </button>
-      <input
-        id="file_uploads"
-        ref="fileInput"
-        type="file"
-        multiple
-        class="hidden"
-        @change="uploadFiles"
-      />
+      <BtnUpload @click="filesStore.localFiles.length ? uploadAllFiles() : openFileDialog()" />
     </div>
   </div>
 </template>
