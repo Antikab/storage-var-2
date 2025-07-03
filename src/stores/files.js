@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useFilesStore = defineStore('files', () => {
+const useFilesStore = defineStore('files', () => {
   const loading = ref(false)
   const loaded = ref(false)
   const localFiles = ref([])
@@ -27,7 +27,6 @@ export const useFilesStore = defineStore('files', () => {
   function setUploadedFiles(files) {
     uploadedFiles.value = files
     loaded.value = true
-    console.log('[Pinia] setUploadedFiles:', uploadedFiles.value)
   }
 
   return {
@@ -42,3 +41,5 @@ export const useFilesStore = defineStore('files', () => {
     setUploadedFiles,
   }
 })
+
+export { useFilesStore }

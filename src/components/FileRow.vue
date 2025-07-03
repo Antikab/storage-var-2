@@ -1,11 +1,10 @@
 <script setup>
-import { formatDate, formatSize, getFileIcon } from '@/utils/utils'
-import { useFilesStore } from '@/stores/files'
 import FileIcon from '@/components/FileIcon.vue'
 import BtnMenu from '@/components/BtnMenu.vue'
+import { formatDate, formatSize, getFileIcon } from '@/utils/utils'
+import { useFilesStore } from '@/stores/files'
 
 const filesStore = useFilesStore()
-console.log('uploadedFiles:', filesStore.uploadedFiles)
 </script>
 
 <template>

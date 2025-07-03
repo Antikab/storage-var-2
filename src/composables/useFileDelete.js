@@ -2,8 +2,9 @@
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { ref as storageRef, deleteObject } from 'firebase/storage'
-import { useFilesStore } from '@/stores/files'
+
 import { storage } from '@/firebase'
+import { useFilesStore } from '@/stores/files'
 
 function useFileDelete() {
   const deletingId = ref(null)
@@ -19,9 +20,9 @@ function useFileDelete() {
       if (filesStore.uploadedFiles.length === 0) {
         router.replace({ name: 'home' })
       }
-    } catch (e) {
+    } catch (error) {
       alert('Error deleting file')
-      console.log(e)
+      console.error(error)
     } finally {
       deletingId.value = null
     }

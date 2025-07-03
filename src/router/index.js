@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import { useFirebaseFilesFetch } from '@/composables/useFirebaseFilesFetch'
 import { useFilesStore } from '@/stores/files'
 
@@ -21,15 +22,15 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const filesStore = useFilesStore()
 
-  if ((to.name === 'home' || to.name === 'files') && !filesStore.uploadedFiles.length) {
+  if ((to.name === 'home' || to.name === 'files') && !filesStore.loaded) {
     await useFirebaseFilesFetch()
   }
 
-  if (to.name === 'home' && filesStore.uploadedFiles.length) {
+  if (to.name === 'home' && filesStore.loaded && filesStore.uploadedFiles.length) {
     return { name: 'files' }
   }
 
-  if (to.name === 'files' && !filesStore.uploadedFiles.length) {
+  if (to.name === 'files' && filesStore.loaded && !filesStore.uploadedFiles.length) {
     return { name: 'home' }
   }
 })

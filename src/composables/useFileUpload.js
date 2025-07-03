@@ -1,11 +1,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ref as storageRef, uploadBytes } from 'firebase/storage'
 
-import { useFilesStore } from '@/stores/files'
 import { generateFileId } from '@/utils/utils'
-import { ref as storageRef, uploadBytes, getDownloadURL, getMetadata } from 'firebase/storage'
-import { storage } from '@/firebase'
 import { useFirebaseFilesFetch } from '@/composables/useFirebaseFilesFetch'
+import { storage } from '@/firebase'
+import { useFilesStore } from '@/stores/files'
 
 function useFileUpload() {
   const filesStore = useFilesStore()
@@ -31,7 +31,6 @@ function useFileUpload() {
         type: file.type,
         file,
       })
-      console.log('addLocalFile', filesStore.localFiles)
     }
     if (fileInput.value) fileInput.value.value = ''
   }
@@ -47,7 +46,6 @@ function useFileUpload() {
         }),
       )
       await useFirebaseFilesFetch()
-      console.log('[Component useFileUpload] uploadedFiles:', filesStore.uploadedFiles)
       filesStore.clearLocalFiles()
       router.replace({ name: 'files' })
     } catch (error) {

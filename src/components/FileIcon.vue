@@ -21,7 +21,11 @@ const props = defineProps({
 
 <template>
   <div
-    :class="['flex flex-none items-center justify-center rounded-full', props.bg, props.bgSvg]"
+    :class="[
+      'flex flex-none items-center justify-center rounded-full pointer-events-none',
+      props.bg,
+      props.bgSvg,
+    ]"
     :style="{
       width: props.size + 'px',
       height: props.size + 'px',

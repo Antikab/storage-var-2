@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 
 import IconUploadDndActive from '@/assets/icons/icon-upload-dnd-active.svg'
 import IconUploadDnd from '@/assets/icons/icon-upload-dnd.svg'

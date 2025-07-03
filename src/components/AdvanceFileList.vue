@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { useFilesStore } from '@/stores/files'
-import { formatSize, getFileIcon } from '@/utils/utils'
+
 import FileIcon from '@/components/FileIcon.vue'
+import { formatSize, getFileIcon } from '@/utils/utils'
+import { useFilesStore } from '@/stores/files'
 
 const filesStore = useFilesStore()
 </script>

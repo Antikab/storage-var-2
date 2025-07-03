@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 
-import { useFileDelete } from '@/composables/useFileDelete'
 import iconDots from '@/assets/icons/icon-dots.svg'
+import { useFileDelete } from '@/composables/useFileDelete'
 
 const props = defineProps({
   file: {
