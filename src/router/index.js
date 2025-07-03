@@ -21,7 +21,7 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const filesStore = useFilesStore()
 
-  if (!filesStore.loaded && (to.name === 'home' || to.name === 'files')) {
+  if ((to.name === 'home' || to.name === 'files') && !filesStore.uploadedFiles.length) {
     await useFirebaseFilesFetch()
   }
 

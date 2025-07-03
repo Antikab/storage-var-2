@@ -5,6 +5,7 @@ import { useFilesStore } from '@/stores/files'
 import { generateFileId } from '@/utils/utils'
 import { ref as storageRef, uploadBytes, getDownloadURL, getMetadata } from 'firebase/storage'
 import { storage } from '@/firebase'
+import { useFirebaseFilesFetch } from '@/composables/useFirebaseFilesFetch'
 
 function useFileUpload() {
   const filesStore = useFilesStore()
@@ -39,23 +40,14 @@ function useFileUpload() {
   async function uploadAllFiles() {
     filesStore.loading = true
     try {
-      const uploadedFilesList = await Promise.all(
+      await Promise.all(
         filesStore.localFiles.map(async (localFile) => {
           const fileRef = storageRef(storage, `upload-files/${localFile.name}`)
           await uploadBytes(fileRef, localFile.file)
-          const url = await getDownloadURL(fileRef)
-          const meta = await getMetadata(fileRef)
-          return {
-            id: meta.fullPath,
-            name: meta.name,
-            size: meta.size,
-            url,
-            date: meta.timeCreated,
-            type: meta.contentType || '',
-          }
         }),
       )
-      filesStore.setUploadedFiles(uploadedFilesList)
+      await useFirebaseFilesFetch()
+      console.log('[Component useFileUpload] uploadedFiles:', filesStore.uploadedFiles)
       filesStore.clearLocalFiles()
       router.replace({ name: 'files' })
     } catch (error) {

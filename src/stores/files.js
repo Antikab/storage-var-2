@@ -25,8 +25,9 @@ export const useFilesStore = defineStore('files', () => {
   }
 
   function setUploadedFiles(files) {
-    loaded.value = true
     uploadedFiles.value = files
+    loaded.value = true
+    console.log('[Pinia] setUploadedFiles:', uploadedFiles.value)
   }
 
   return {

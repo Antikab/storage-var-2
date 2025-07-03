@@ -26,7 +26,7 @@ async function useFirebaseFilesFetch() {
     )
 
     filesStore.setUploadedFiles(fetched)
-    console.log('Fetched from firebase:', fetched)
+    console.log('[Component useFirebaseFilesFetch] uploadedFiles:', filesStore.uploadedFiles)
     return fetched
   } catch (e) {
     alert('Error getting file list')
