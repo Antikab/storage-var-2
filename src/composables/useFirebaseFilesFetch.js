@@ -2,10 +2,10 @@ import { useFilesStore } from '@/stores/files'
 import { ref as storageRef, listAll, getDownloadURL, getMetadata } from 'firebase/storage'
 import { storage } from '@/firebase'
 
-async function useFirebaseFetch() {
+// Получает список всех файлов из Firebase Storage и сохраняет их в Pinia
+async function useFirebaseFilesFetch() {
   const filesStore = useFilesStore()
   if (filesStore.loaded) return filesStore.uploadedFiles
-  console.log('already loaded:', filesStore.uploadedFiles)
   filesStore.loading = true
   try {
     const folderRef = storageRef(storage, 'upload-files')
@@ -36,4 +36,4 @@ async function useFirebaseFetch() {
   }
 }
 
-export { useFirebaseFetch }
+export { useFirebaseFilesFetch }

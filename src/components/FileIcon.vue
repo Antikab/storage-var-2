@@ -8,6 +8,10 @@ const props = defineProps({
     type: String,
     default: 'bg-primary-light-color',
   },
+  bgSvg: {
+    type: String,
+    default: 'text-primary-color',
+  },
   src: {
     type: String,
     required: true,
@@ -17,12 +21,12 @@ const props = defineProps({
 
 <template>
   <div
-    :class="['flex flex-none items-center justify-center rounded-full', props.bg]"
+    :class="['flex flex-none items-center justify-center rounded-full', props.bg, props.bgSvg]"
     :style="{
       width: props.size + 'px',
-      height: props.size + 'px'
+      height: props.size + 'px',
     }"
   >
-    <inline-svg :src="props.src" class="w-5 h-5 text-primary-color" aria-label="file-icon" />
+    <inline-svg :src="props.src" class="w-5 h-5" aria-label="file-icon" />
   </div>
 </template>

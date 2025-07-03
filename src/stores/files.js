@@ -24,11 +24,6 @@ export const useFilesStore = defineStore('files', () => {
     localFiles.value = []
   }
 
-  function addUploadedFile(file) {
-    loaded.value = true
-    uploadedFiles.value.push(file)
-  }
-
   function setUploadedFiles(files) {
     loaded.value = true
     uploadedFiles.value = files
@@ -43,7 +38,6 @@ export const useFilesStore = defineStore('files', () => {
     removeLocalFile,
     removeUploadedFile,
     clearLocalFiles,
-    addUploadedFile,
     setUploadedFiles,
   }
 })

@@ -1,21 +1,21 @@
 // useFileDelete - реализует удаление файла из Firebase Storage с обновлением состояния в Pinia и перенаправлением на главную, если файлов больше нет.
-import { ref as vueRef } from 'vue'
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import { ref as storageRef, deleteObject } from 'firebase/storage'
 import { useFilesStore } from '@/stores/files'
-import { useRouter } from 'vue-router'
 import { storage } from '@/firebase'
 
 function useFileDelete() {
-  const deletingId = vueRef(null)
+  const deletingId = ref(null)
   const filesStore = useFilesStore()
   const router = useRouter()
 
-  async function deleteFile(id) {
-    deletingId.value = id
+  async function deleteFile(fullPath) {
+    deletingId.value = fullPath
     try {
-      const fileRef = storageRef(storage, id)
+      const fileRef = storageRef(storage, fullPath)
       await deleteObject(fileRef)
-      filesStore.removeUploadedFile(id)
+      filesStore.removeUploadedFile(fullPath)
       if (filesStore.uploadedFiles.length === 0) {
         router.replace({ name: 'home' })
       }

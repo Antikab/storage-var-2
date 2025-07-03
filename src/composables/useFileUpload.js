@@ -19,7 +19,7 @@ function useFileUpload() {
   }
 
   // Добавить файлы в хранилище для временного списка
-  function handleFiles(files) {
+  function addAdvanceFileList(files) {
     if (!files) return
     for (const file of files) {
       const id = generateFileId(file)
@@ -39,20 +39,23 @@ function useFileUpload() {
   async function uploadAllFiles() {
     filesStore.loading = true
     try {
-      for (const localFile of filesStore.localFiles) {
-        const fileRef = storageRef(storage, `upload-files/${localFile.name}`)
-        await uploadBytes(fileRef, localFile.file)
-        const url = await getDownloadURL(fileRef)
-        const meta = await getMetadata(fileRef)
-        filesStore.addUploadedFile({
-          id: meta.fullPath,
-          name: meta.name,
-          size: meta.size,
-          url,
-          date: meta.timeCreated,
-          type: meta.contentType || '',
-        })
-      }
+      const uploadedFilesList = await Promise.all(
+        filesStore.localFiles.map(async (localFile) => {
+          const fileRef = storageRef(storage, `upload-files/${localFile.name}`)
+          await uploadBytes(fileRef, localFile.file)
+          const url = await getDownloadURL(fileRef)
+          const meta = await getMetadata(fileRef)
+          return {
+            id: meta.fullPath,
+            name: meta.name,
+            size: meta.size,
+            url,
+            date: meta.timeCreated,
+            type: meta.contentType || '',
+          }
+        }),
+      )
+      filesStore.setUploadedFiles(uploadedFilesList)
       filesStore.clearLocalFiles()
       router.replace({ name: 'files' })
     } catch (error) {
@@ -73,14 +76,14 @@ function useFileUpload() {
   function onDrop(event) {
     const files = event.dataTransfer.files
     dragZone.value = false
-    handleFiles(files)
+    addAdvanceFileList(files)
   }
 
   return {
     fileInput,
     dragZone,
     openFileDialog,
-    handleFiles,
+    addAdvanceFileList,
     uploadAllFiles,
     onDragOver,
     onDragLeave,

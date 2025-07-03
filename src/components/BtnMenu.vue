@@ -5,8 +5,12 @@ import { useFileDelete } from '@/composables/useFileDelete'
 import iconDots from '@/assets/icons/icon-dots.svg'
 
 const props = defineProps({
-  file: Object,
+  file: {
+    type: Object,
+    required: true,
+  },
 })
+
 const isOpen = ref(false)
 const { deletingId, deleteFile } = useFileDelete()
 

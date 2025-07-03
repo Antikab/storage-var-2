@@ -1,19 +1,19 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-import { useFilesStore } from '@/stores/files'
-import { useFileUpload } from '@/composables/useFileUpload'
-import { formatSize, generateFileId } from '@/utils/utils'
 import IconUploadDndActive from '@/assets/icons/icon-upload-dnd-active.svg'
 import IconUploadDnd from '@/assets/icons/icon-upload-dnd.svg'
+import AdvanceFileList from '@/components/AdvanceFileList.vue'
 import BtnUpload from '@/components/BtnUpload.vue'
+import { useFileUpload } from '@/composables/useFileUpload'
+import { useFilesStore } from '@/stores/files'
 
 const filesStore = useFilesStore()
 const {
   fileInput,
   dragZone,
   openFileDialog,
-  handleFiles,
+  addAdvanceFileList,
   uploadAllFiles,
   onDragOver,
   onDragLeave,
@@ -44,7 +44,7 @@ onBeforeUnmount(() => {
       type="file"
       multiple
       class="hidden"
-      @change="(event) => handleFiles(event.target.files)"
+      @change="(event) => addAdvanceFileList(event.target.files)"
     />
     <div class="w-full text-lg font-medium text-black-color px-6 py-5">My projects</div>
 
@@ -89,24 +89,7 @@ onBeforeUnmount(() => {
         </p>
       </div>
 
-      <div v-else class="max-h-[175px] h-fit flex flex-col gap-2.5 overflow-y-auto">
-        <TransitionGroup name="list">
-          <div
-            v-for="file in filesStore.localFiles"
-            :key="file.id"
-            class="flex flex-col gap-1 px-4 py-2 mx-4 odd:bg-light-gray-color even:bg-light-gray-color-2 hover:bg-primary-light-color text-xs break-all rounded-md transition-colors duration-300"
-          >
-            <button
-              class="ml-auto text-primary-color-hover hover:text-red-600"
-              @click="filesStore.removeLocalFile(file.id)"
-            >
-              <span class="px-1 py-2"> Delete </span>
-            </button>
-            <div>{{ file.name }}</div>
-            <div>Size: {{ formatSize(file.size) }}</div>
-          </div>
-        </TransitionGroup>
-      </div>
+      <AdvanceFileList v-else />
 
       <div v-if="filesStore.localFiles.length" class="flex flex-nowrap gap-2 mt-3 mb-2">
         <button
@@ -126,28 +109,3 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(20px) scale(0.98);
-}
-
-.list-enter-to,
-.list-leave-from {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-}
-
-.list-leave-active {
-  position: relative;
-  z-index: 1;
-}
-</style>
