@@ -14,17 +14,10 @@ const props = defineProps({
 const isOpen = ref(false)
 const { deletingId, deleteFile } = useFileDelete()
 
-function toggle() {
-  isOpen.value = !isOpen.value
-}
-
-function close() {
-  isOpen.value = false
-}
-
-async function onDelete() {
+const toggle = () => (isOpen.value = !isOpen.value)
+const close = () => (isOpen.value = false)
+const onDelete = async () => {
   await deleteFile(props.file.id)
-
   close()
 }
 </script>

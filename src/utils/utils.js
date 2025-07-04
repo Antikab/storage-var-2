@@ -9,19 +9,17 @@ import IconFig from '/icons/icon-fig.svg'
 import IconFram from '/icons/icon-fram.svg'
 import IconDesign from '/icons/icon-design.svg'
 
-function formatSize(bytes, precision = 2) {
+const formatSize = (bytes, precision = 2) => {
   if (bytes === 0) return '0 Байт'
   const units = ['Байт', 'КБ', 'МБ', 'ГБ', 'ТБ']
   const index = Math.floor(Math.log(bytes) / Math.log(1024))
   return (bytes / Math.pow(1024, index)).toFixed(precision) + ' ' + units[index]
 }
 
-function generateFileId(file) {
-  return `${file.size}-${file.lastModified}-${file.name}`
-}
+const generateFileId = (file) => `${file.size}-${file.lastModified}-${file.name}`
 
 // Преобразует дату
-function formatDate(date) {
+const formatDate = (date) => {
   if (!date) return '—'
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -31,7 +29,7 @@ function formatDate(date) {
 }
 
 // Возвращает иконку для файла по его MIME-типу или расширению
-function getFileIcon(file) {
+const getFileIcon = (file) => {
   const ext = file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase()
   const name = file.name.toLowerCase()
   const type = file.type || ''

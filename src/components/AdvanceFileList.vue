@@ -1,6 +1,4 @@
 <script setup>
-import { ref } from 'vue'
-
 import FileIcon from '@/components/FileIcon.vue'
 import { formatSize, getFileIcon } from '@/utils/utils'
 import { useFilesStore } from '@/stores/files'

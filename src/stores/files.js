@@ -7,27 +7,19 @@ const useFilesStore = defineStore('files', () => {
   const localFiles = ref([])
   const uploadedFiles = ref([])
 
-  function addLocalFile(file) {
+  const addLocalFile = (file) => {
     if (!localFiles.value.some((f) => f.id === file.id)) {
       localFiles.value.push(file)
     }
   }
-
-  function removeLocalFile(id) {
-    localFiles.value = localFiles.value.filter((f) => f.id !== id)
-  }
-  function removeUploadedFile(id) {
-    uploadedFiles.value = uploadedFiles.value.filter((f) => f.id !== id)
-  }
-
-  function clearLocalFiles() {
-    localFiles.value = []
-  }
-
-  function setUploadedFiles(files) {
+  const setUploadedFiles = (files) => {
     uploadedFiles.value = files
     loaded.value = true
   }
+  const removeUploadedFile = (id) =>
+    (uploadedFiles.value = uploadedFiles.value.filter((f) => f.id !== id))
+  const removeLocalFile = (id) => (localFiles.value = localFiles.value.filter((f) => f.id !== id))
+  const clearLocalFiles = () => (localFiles.value = [])
 
   return {
     loading,

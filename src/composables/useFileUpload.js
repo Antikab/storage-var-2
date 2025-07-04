@@ -7,20 +7,20 @@ import { useFirebaseFilesFetch } from '@/composables/useFirebaseFilesFetch'
 import { storage } from '@/firebase'
 import { useFilesStore } from '@/stores/files'
 
-function useFileUpload() {
+const useFileUpload = () => {
   const filesStore = useFilesStore()
   const fileInput = ref(null)
   const dragZone = ref(false)
   const router = useRouter()
 
   // Открыть диалоговое окно выбора файлов
-  function openFileDialog() {
+  const openFileDialog = () => {
     if (fileInput.value) fileInput.value.value = ''
     fileInput.value?.click()
   }
 
   // Добавить файлы в хранилище для временного списка
-  function addAdvanceFileList(files) {
+  const addAdvanceFileList = (files) => {
     if (!files) return
     for (const file of files) {
       const id = generateFileId(file)
@@ -35,8 +35,17 @@ function useFileUpload() {
     if (fileInput.value) fileInput.value.value = ''
   }
 
+  // Drag&Drop обработчики
+  const onDragOver = () => (dragZone.value = true)
+  const onDragLeave = () => (dragZone.value = false)
+  const onDrop = (event) => {
+    const files = event.dataTransfer.files
+    dragZone.value = false
+    addAdvanceFileList(files)
+  }
+
   // Загрузка файлов в хранилище FB
-  async function uploadAllFiles() {
+  const uploadAllFiles = async () => {
     filesStore.loading = true
     try {
       await Promise.all(
@@ -54,19 +63,6 @@ function useFileUpload() {
     } finally {
       filesStore.loading = false
     }
-  }
-
-  // Drag&Drop обработчики (если надо)
-  function onDragOver() {
-    dragZone.value = true
-  }
-  function onDragLeave() {
-    dragZone.value = false
-  }
-  function onDrop(event) {
-    const files = event.dataTransfer.files
-    dragZone.value = false
-    addAdvanceFileList(files)
   }
 
   return {

@@ -6,12 +6,12 @@ import { ref as storageRef, deleteObject } from 'firebase/storage'
 import { storage } from '@/firebase'
 import { useFilesStore } from '@/stores/files'
 
-function useFileDelete() {
+const useFileDelete = () => {
   const deletingId = ref(null)
   const filesStore = useFilesStore()
   const router = useRouter()
 
-  async function deleteFile(fullPath) {
+  const deleteFile = async (fullPath) => {
     deletingId.value = fullPath
     try {
       const fileRef = storageRef(storage, fullPath)

@@ -21,9 +21,7 @@ const {
 } = useFileUpload()
 
 const events = ['dragenter', 'dragover', 'dragleave', 'drop']
-function preventDefaults(event) {
-  event.preventDefault()
-}
+const preventDefaults = (event) => event.preventDefault()
 
 onMounted(() => {
   events.forEach((eventName) => {

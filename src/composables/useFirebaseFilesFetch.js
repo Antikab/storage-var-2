@@ -4,7 +4,7 @@ import { storage } from '@/firebase'
 import { useFilesStore } from '@/stores/files'
 
 // Получает список всех файлов из Firebase Storage и сохраняет их в Pinia
-async function useFirebaseFilesFetch() {
+const useFirebaseFilesFetch = async () => {
   const filesStore = useFilesStore()
   filesStore.loading = true
   try {
